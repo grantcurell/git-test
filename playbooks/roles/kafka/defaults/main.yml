@@ -3,16 +3,22 @@
 
 #### Main Role Configuration ####
 
-kafka_user: kafka # not being used
-kafka_group: kafka # not being used
-kafka_container_name: 'rock-kafka'
-kafka_dir: "{{ rocknsm_dir }}/kafka"
-kafka_data_dir: "{{ rock_data_dir }}/kafka"
+kafka_image: "tfplenum/kafka"
 kafka_port: 9092
-kafka_install_dir: '/opt/kafka'
-kafka_log_dir: '/var/log/kafka'
-scala_ver: 2.11 # per https://kafka.apache.org/downloads they recommend Scala version 2.11
-kafka_ver: 1.0.0
-kafka_download_name: kafka_{{ scala_ver }}-{{ kafka_ver }}.tgz
-kafka_url: https://www.apache.org/dist/kafka/{{ kafka_ver }}/{{ kafka_download_name }}
-kafka_sha512sum_url: https://www.apache.org/dist/kafka/{{ kafka_ver }}/{{ kafka_download_name }}.sha512
+kafka_dir: "{{ install_dir }}/kafka"
+kafka_data_path: "/data/kafka"
+kafka_home: /opt/kafka
+kafka_jmx_port: "9999"
+
+zookeeper_port: 2181
+zookeeper_dir: "{{ install_dir }}/zookeeper"
+zookeeper_data_path: "/data"
+zookeeper_datalog_path: "/datalog"
+zookeeper_image: tfplenum/zookeeper
+zookeeper_ver: alpine
+zookeeper_home: /opt/zookeeper
+
+# The num.io.threads property should be set to a value equal to or greater than
+# the number of disks dedicated for Kafka. Recommendation: start by setting this
+# property equal to the number of disks.
+num_of_pvcs: 1

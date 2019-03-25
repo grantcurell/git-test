@@ -1,96 +1,28 @@
-Kafka
-=========
+## Monitoring Kafka/Zookeeper using Kafka Manager GUI
+### Navigate to kafka-manager web gui 
+1. If you are using master-server as dns, Open browser navigate to http://kafka-manager.
+2. If you are not using master as dns, Open Browser and navigate to kafka-manager service ip.
+    - To get the service ip do the following:
+        - ssh to master-server and 
+        - run kubectl get services | grep -i kafka-manager
+        - Get the external ip address of the kafka-manager service
+### Adding a cluster
+1. Select Cluster-> "Add Cluster"
+2. Fill out Add cluster form:
+	* "Cluster Name" - Name your cluster ie: "zk"
+	- "Cluster Zookeeper Hosts"
+		- For the default zookeeper cluster use "zookeeper:2181"
+        - For remote sensor zookeeper use the kafka broker service name for the node the format will be "kakfa-<node shortname>-broker" and port 2181 ie: "kafka-tfsensor2-broker:2181"
+	- Check "Enable JMX Polling"
+	- Check "Poll consumer information"
+3. Press "Save" at the bottom
 
-Kafka receives data in our build from Suricata and Bro. Suricata pushes it via filebeats to Kafka and Bro pushes it via a custom plugin.
-
-Requirements
-------------
-
-Currently none.
-
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-This must be installed with the zookeeper role.
-
-Helpful Kafka Commands
-----------------------
-
-Get a list of topics:
-docker exec -it rock-kafka /opt/kafka/bin/kafka-topics.sh --zookeeper rock-zookeeper:2181 --list
-
-List information regarding a specific topic
-docker exec -it rock-kafka /opt/kafka/bin/kafka-topics.sh --zookeeper rock-zookeeper:2181 --describe --topic suricata-raw
-
-Helpful information
--------------------
-
-What is a Kafka cluster?
-************************
-A Kafka cluster is one or more Kafka servers.
-
-What is a Kafka producer?
-*************************
-A Kafka producer is any process that pushes data into Kafka topics within the broker.
-
-What is a Kafka consumer?
-*************************
-Consumers can read messages starting from a specific offset and are allowed to read from any offset point they choose. This allows consumers to join the cluster at any point in time.
-
-Consumers can join a group called a consumer group. A consumer group includes the set of consumer processes that are subscribing to a specific topic. Each consumer in the group is assigned a set of partitions to consume from. They will receive messages from a different subset of the partitions in the topic. Kafka guarantees that a message is only read by a single consumer in the group.
-
-Consumers pull messages from topic partitions. Different consumers can be responsible for different partitions. Kafka can support a large number of consumers and retain large amounts of data with very little overhead. By using consumer groups, consumers can be parallelised so that multiple consumers can read from multiple partitions on a topic, allowing a very high message processing throughput. The number of partitions impacts the maximum parallelism of consumers as you cannot have more consumers than partitions.
-
-Data/messages are never pushed out to consumers, the consumer will ask for messages when the consumer is ready to handle the message. The consumers will never overload themselves with lots of data or loose any data since all messages are being queued up in Kafka. If the consumer is behind while processing messages, it has the option to eventually catch up and get back to handle data in real time.
-
-What is a broker?
-
-
-What is a Kafka topic?
-**********************
-A Topic is a category/feed name to which messages are stored and published. Messages are byte arrays that can store any object in any format. Messages published to the cluster will stay in the cluster until a configurable retention period has passed by. Kafka retains all messages for a set amount of time, and therefore, consumers are responsible to track their location.
-
-Kafka topic partition
-*********************
-Kafka topics are divided into a number of partitions, which contains messages in an unchangeable sequence. Each message in a partition is assigned and identified by its unique offset. A topic can also have multiple partition logs like the click-topic has in the image to the right. This allows for multiple consumers to read from a topic in parallel.
-
-Kafka Replication
-*****************
-In Kafka, replication is implemented at the partition level. The redundant unit of a topic partition is called a replica. Each partition usually has one or more replicas meaning that partitions contain messages that are replicated over a few Kafka brokers in the cluster. It's possible for the producer to attach a key to the messages and tell which partition the message should go to. All messages with the same key will arrive at the same partition.
-
-Partitions allow you to parallelize a topic by splitting the data in a particular topic across multiple brokers.
-
-Every partition (replica) has one server acting as a leader and the rest of them as followers. The leader replica handles all read-write requests for the specific partition and the followers replicate the leader. If the leader server fails, one of the follower servers become the leader by default. When a producer publishes a message to a partition in a topic, it is forwarded to its leader. The leader appends the message to its commit log and increments its message offset. Kafka only exposes a message to a consumer after it has been committed and each piece of data that comes in will be stacked on the cluster.
-
-Workflow of Pub-Sub Messaging
------------------------------
-https://www.tutorialspoint.com/apache_kafka/apache_kafka_workflow.htm
-
-Helpful Tutorials
------------------
-https://www.cloudkarafka.com/blog/2016-11-30-part1-kafka-for-beginners-what-is-apache-kafka.html
-
-Helpful Kafkacat Commands
--------------------------
-
-List Topics
-kafkacat -b 127.0.0.1:9092 -L
-
-Debug Networking
-kafkacat -b 127.0.0.1:9092 -d all -L
-
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-Grant Curell wrote this version of the Kafka plugin. grant.curell@salientcrgt.com
+### View Kafka Stats
+(Note: You must first add a cluster, see section "Adding a cluster")
+1. Select "Cluster->List"
+2. Select the desired zookeeper cluster to view.
+3. To view the combined stats of all topics:
+    - Under Summary section, Select the number next to "Brokers".
+4. To view individual stats for each topic:
+    - Under Summary section, Select the number next to "Topics"
+    - Then select the desired topic name to view ie: bro-raw
