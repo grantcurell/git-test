@@ -1,22 +1,18 @@
 %YAML 1.1
 ---
 
-#### Retention Configuration ####
+bro_image: "tfplenum/bro"
+bro_dir: "{{ install_dir }}/bro"
+num_bro_replicas: "{{ groups['bro'] | length }}"
 
-bro_log_retention: 0
-bro_stats_retention: 0
+# This is the path of the Bro installation in the pod
+bro_container_path: "/usr/local/bro-{{ bro_version }}"
 
+# This is the directory on the sensors that will be mounted by the Bro pod
+# to add custom scripts.
+bro_scripts: "{{ bro_dir }}/bro-scripts"
 
-#### Main Role Configuration ####
+# This is the number of bro loggers you run - 1 is typically enough
+bro_loggers: 1
 
-bro_user: bro
-bro_group: bro
-bro_data_dir: "{{ rock_data_dir }}/bro"
-bro_cpu: "{{ (ansible_processor_vcpus // 2) if (ansible_processor_vcpus <= 16) else 8 }}"
-bro_rockscripts_repo: https://github.com/rocknsm/rock-scripts.git
-bro_rockscripts_branch: master
-bro_rockscripts_filename: "rock-scripts_{{ bro_rockscripts_branch | replace('/', '-') }}.tar.gz"
-bro_sysconfig_dir: /etc/bro
-bro_site_dir: /usr/share/bro/site
-bro_prefix: /usr
-rock_cache_dir: /srv/rocknsm/support
+...

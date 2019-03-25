@@ -27,13 +27,13 @@ MailHostUpDown = 1
 
 # Rotation interval in seconds for log files on manager (or standalone) node.
 # A value of 0 disables log rotation.
-LogRotationInterval = 3600
+LogRotationInterval = 60
 
 # Expiration interval for archived log files in LogDir.  Files older than this
 # will be deleted by "broctl cron".  The interval is an integer followed by
 # one of these time units:  day, hr, min.  A value of 0 means that logs
 # never expire.
-LogExpireInterval = {{ bro_log_retention }}
+LogExpireInterval = 2min
 
 # Enable BroControl to write statistics to the stats.log file.  A value of 1
 # means write to stats.log, and a value of 0 means do not write to stats.log.
@@ -42,7 +42,7 @@ StatsLogEnable = 1
 # Number of days that entries in the stats.log file are kept.  Entries older
 # than this many days will be removed upon running "broctl cron".  A value of 0
 # means that entries never expire.
-StatsLogExpireInterval = {{ bro_stats_retention }}
+StatsLogExpireInterval = 2
 
 ###############################################
 # Other Options
@@ -59,12 +59,12 @@ SitePolicyScripts = local.bro
 
 # Location of the log directory where log files will be archived each rotation
 # interval.
-LogDir = {{ bro_data_dir }}/logs
+LogDir = {{ bro_container_path }}/logs
 
 # Location of the spool directory where files and data that are currently being
 # written are stored.
-SpoolDir = {{ bro_data_dir }}/spool
+SpoolDir = {{ bro_container_path }}/spool
 
 # Location of other configuration files that can be used to customize
 # BroControl operation (e.g. local networks, nodes).
-CfgDir = {{ bro_sysconfig_dir }}
+CfgDir = {{ bro_container_path }}/etc
