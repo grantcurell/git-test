@@ -7,6 +7,8 @@
   debug:
     msg: "This line and the two above should appear in the new code"
 
+# Everything below is no longer necessary a year from now
+
 - name: 'Download Elasticsearch container'
   docker_image:
     name: "{{ elastic_container }}:{{ elastic_ver }}"
